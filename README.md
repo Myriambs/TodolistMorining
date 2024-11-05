@@ -1,70 +1,181 @@
-# Getting Started with Create React App
+Voici une explication détaillée pour chaque composant et bloc de code dans votre projet ReactJS de To-Do List.
+1. App.js
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Ce fichier est le composant principal de votre application. Il gère l'état principal de la liste de tâches (todos) et les fonctions de manipulation des tâches (ajout, suppression, et marquage comme complétée).
+Code :
 
-## Available Scripts
+javascript
 
-In the project directory, you can run:
+import React, { useState } from 'react'
+import './App.css'
+import AddItems from './component/AddItems'
+import ListItems from './component/ListItems'
+import Header from './component/Header'
 
-### `npm start`
+const App = () => {
+  const [todos, setTodos] = useState([
+    { id: 1, text: "fi9An bikri", isDone: false },
+    { id: 2, text: "todo2", isDone: true },
+    { id: 3, text: "todo3", isDone: false }
+  ])
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+  const filterTodo = (ID) => {
+    setTodos(todos.filter((el) => el.id !== ID))
+  }
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+  const CompTodo = (ID) => {
+    setTodos(todos.map((el) => el.id === ID ? { ...el, isDone: !el.isDone } : el))
+  }
 
-### `npm test`
+  const addItem = (newTodo) => {
+    setTodos([...todos, newTodo])
+  }
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  return (
+    <div>
+      <div className='container'>
+        <Header />
+        <AddItems addItem={addItem} />
+        <ListItems todos={todos} filterTodo={filterTodo} CompTodo={CompTodo} />
+      </div>
+    </div>
+  )
+}
 
-### `npm run build`
+export default App
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Explications :
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+    useState : Initialise l'état todos qui contient les tâches sous forme de tableau d’objets. Chaque tâche a un id, un text (description), et un booléen isDone indiquant si elle est terminée.
+    filterTodo : Cette fonction supprime une tâche en filtrant celles dont l'id est différent de celui passé en argument.
+    CompTodo : Cette fonction marque une tâche comme complétée (ou la démarque) en inversant la valeur de isDone.
+    addItem : Cette fonction ajoute une nouvelle tâche à la liste en l'ajoutant à l'état todos.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Structure du retour (return) :
 
-### `npm run eject`
+    <Header /> : Affiche l’en-tête de l'application.
+    <AddItems addItem={addItem} /> : Rend le composant pour ajouter une nouvelle tâche.
+    <ListItems /> : Affiche la liste de tâches.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. ListItems.js
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Ce composant affiche la liste des tâches en utilisant le composant ELement pour chaque tâche.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+javascript
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+import React from 'react'
+import ELement from './ELement'
 
-## Learn More
+const ListItems = ({ todos, filterTodo, CompTodo }) => {
+  return (
+    <section className='todo-list-section'>
+      <ul id='todo-list'>
+        {todos.map((el) => <ELement ell={el} filterTodo={filterTodo} CompTodo={CompTodo} />)}
+      </ul>
+    </section>
+  )
+}
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+export default ListItems
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Explications :
 
-### Code Splitting
+    todos.map(...) : Itère sur le tableau todos et passe chaque élément (tâche) au composant ELement.
+    Props : Les props filterTodo et CompTodo sont passées à ELement pour gérer la suppression et la complétion des tâches.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+3. ELement.js
 
-### Analyzing the Bundle Size
+Ce composant affiche chaque tâche sous forme d'élément de liste (<li>) avec des boutons pour marquer la tâche comme terminée ou la supprimer.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+javascript
 
-### Making a Progressive Web App
+import React from 'react'
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+const ELement = ({ ell, filterTodo, CompTodo }) => {
+  return (
+    <li className='todo-item'>
+      <span 
+        className='task-text'
+        style={ ell.isDone ? { textDecoration: "line-through" } : {} }>
+        {ell.text}
+      </span>
+      <button 
+        className='complete-button'
+        onClick={() => CompTodo(ell.id)}>
+        Complete
+      </button>
+      <button 
+        className='delete-button' 
+        onClick={() => filterTodo(ell.id)}>
+        Delete
+      </button>
+    </li>
+  )
+}
 
-### Advanced Configuration
+export default ELement
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Explications :
 
-### Deployment
+    <span> : Affiche le texte de la tâche. Si isDone est true, applique un style line-through pour indiquer qu'elle est complétée.
+    Boutons Complete et Delete :
+        Complete : Inverse l'état de isDone en appelant CompTodo.
+        Delete : Supprime la tâche en appelant filterTodo.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+4. AddItems.js
 
-### `npm run build` fails to minify
+Ce composant permet d’ajouter une nouvelle tâche. Il utilise uuidv4() pour générer un id unique.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+javascript
+
+import React, { useState } from 'react'
+import { v4 as uuidv4 } from 'uuid';
+
+const AddItems = ({ addItem }) => {
+  const [textInpt, setTextInput] = useState("")
+
+  const Add = () => {
+    if (textInpt.trim()) {
+      addItem({
+        id: uuidv4(),
+        text: textInpt,
+        isDone: false
+      })
+      setTextInput("")
+    }
+  }
+
+  return (
+    <section className='todo-input-section'>
+      <div className='todo-input-wrapper'>
+        <input 
+          type='text' 
+          id='todo-input' 
+          placeholder='What do you want to do?'
+          value={textInpt}
+          onChange={(e) => setTextInput(e.target.value)} />
+        <button id='add-button' onClick={Add}>Add</button>
+      </div>
+    </section>
+  )
+}
+
+export default AddItems
+
+Explications :
+
+    useState : Gère l'état textInpt pour stocker le texte saisi dans le champ d'ajout.
+    Add :
+        Crée une nouvelle tâche avec textInpt et isDone à false, en appelant addItem.
+        Vide le champ de texte après ajout.
+    Événements :
+        onChange : Met à jour textInpt avec la saisie de l’utilisateur.
+        onClick : Appelle la fonction Add pour ajouter la nouvelle tâche.
+
+Améliorations et Modifications Potentielles
+
+    Validation d’entrée : Ajouter une vérification pour éviter l’ajout de tâches vides.
+    Amélioration de l'interface : Ajouter des messages de confirmation ou d'erreur.
+    Organisation des tâches : Trier les tâches ou les filtrer pour afficher celles qui sont terminées séparément des autres.
+
+Ces explications détaillées vous permettront de bien comprendre chaque composant et d’apporter des modifications ou des améliorations selon les besoins de vos étudiants.
